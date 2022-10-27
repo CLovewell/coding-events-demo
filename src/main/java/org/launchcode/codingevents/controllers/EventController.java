@@ -1,14 +1,10 @@
 package org.launchcode.codingevents.controllers;
 
-import org.apache.coyote.Request;
 import org.launchcode.codingevents.data.EventData;
 import org.launchcode.codingevents.models.Event;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Chris Bay
@@ -50,6 +46,23 @@ public class EventController {
                 EventData.remove(id);
             }
         }
+        return "redirect:";
+    }
+
+    @GetMapping("edit/{eventId}")
+    public String displayEditForm(Model model, @PathVariable int eventId) {
+        Event eventToEdit = EventData.getById(eventId);
+        String title = "Edit Event " + eventToEdit.getName() + " (id=" + eventToEdit.getId() + ")";
+        model.addAttribute("event", eventToEdit);
+        model.addAttribute("title", title);
+        return "events/edit";
+    }
+
+    @PostMapping("edit")
+    public String processEditForm(Integer eventId, String name, String description) {
+        Event eventToEdit = EventData.getById(eventId);
+        eventToEdit.setName(name);
+        eventToEdit.setDescription(description);
         return "redirect:";
     }
 
