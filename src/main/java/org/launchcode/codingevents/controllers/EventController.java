@@ -68,11 +68,21 @@ public class EventController {
     }
 
     @PostMapping("edit")
-    public String processEditForm(Integer eventId, String name, String description, String contactEmail) {
+    public String processEditForm(Integer eventId, String name,
+                                  String description, String contactEmail,
+                                  Model model) {
         Event eventToEdit = EventData.getById(eventId);
-        eventToEdit.setName(name);
-        eventToEdit.setDescription(description);
-        eventToEdit.setContactEmail(contactEmail);
+        try {
+            eventToEdit.setName(name);
+            eventToEdit.setDescription(description);
+            eventToEdit.setContactEmail(contactEmail);
+        }
+        catch (NullPointerException e) {
+            model.addAttribute("title", "Funny Business");
+            model.addAttribute("message", "You tried to access an event " +
+                    "with an invalid ID number.");
+            return "/funnyBusiness";
+        }
         return "redirect:";
     }
 
