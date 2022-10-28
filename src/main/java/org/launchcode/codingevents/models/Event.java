@@ -27,14 +27,18 @@ public class Event {
     @AssertTrue(message = "All events must require registration")
     private boolean registrationRequired;
 
+    @Positive(message = "Attendance must be greater than 0")
+    private int attendance;
+
     public Event(String name, String description, String contactEmail,
-                 String location, boolean registrationRequired) {
+                 String location, boolean registrationRequired, int attendance) {
         this();
         this.name = name;
         this.description = description;
         this.contactEmail = contactEmail;
         this.location = location;
         this.registrationRequired = registrationRequired;
+        this.attendance = attendance;
     }
 
     public Event() {
@@ -80,6 +84,14 @@ public class Event {
 
     public void setRegistrationRequired(boolean registrationRequired) {
         this.registrationRequired = registrationRequired;
+    }
+
+    public int getAttendance() {
+        return attendance;
+    }
+
+    public void setAttendance(int attendance) {
+        this.attendance = attendance;
     }
 
     public int getId() {
