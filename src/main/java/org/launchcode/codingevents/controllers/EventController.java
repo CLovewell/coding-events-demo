@@ -78,7 +78,7 @@ public class EventController {
             eventToEdit.setContactEmail(contactEmail);
         }
         catch (NullPointerException e) {
-            model.addAttribute("title", "Funny Business");
+            model.addAttribute("title", "I caught you.");
             model.addAttribute("message", "You tried to access an event " +
                     "with an invalid ID number.");
             return "/funnyBusiness";
