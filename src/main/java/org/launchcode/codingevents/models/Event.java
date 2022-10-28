@@ -10,9 +10,8 @@ import java.util.Objects;
  */
 public class Event {
 
-    private int id;
+    private final int id;
     private static int nextId = 1;
-
     @NotBlank(message = "Name is required")
     @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     private String name;
@@ -24,16 +23,16 @@ public class Event {
     @Email(message = "Invalid email. Try again.")
     private String contactEmail;
 
+    public Event() {
+        this.id = nextId;
+        nextId++;
+    }
+
     public Event(String name, String description, String contactEmail) {
         this();
         this.name = name;
         this.description = description;
         this.contactEmail = contactEmail;
-    }
-
-    public Event() {
-        this.id = nextId;
-        nextId++;
     }
 
     public String getName() {
@@ -81,4 +80,5 @@ public class Event {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
