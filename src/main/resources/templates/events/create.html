@@ -31,6 +31,12 @@
         <p class="error" th:errors="${event.location}"></p>
     </div>
     <div class="form-group">
+        <label>Date
+            <input type=date th:field="${event.date}" class="form-control">
+        </label>
+        <p class="error" th:errors="${event.date}"></p>
+    </div>
+    <div class="form-group">
         <label>How many are attending?
             <input type="number" th:field="${event.attendance}" class="form-control">
         </label>

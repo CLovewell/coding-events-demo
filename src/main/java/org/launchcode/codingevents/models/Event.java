@@ -1,6 +1,11 @@
 package org.launchcode.codingevents.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.validation.constraints.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -8,7 +13,7 @@ import java.util.Objects;
  */
 public class Event {
 
-    private int id;
+    private final int id;
     private static int nextId = 1;
 
     @NotBlank(message = "Name is required")
@@ -24,6 +29,7 @@ public class Event {
 
     @NotBlank(message = "Location is required")
     private String location;
+
     @AssertTrue(message = "All events must require registration")
     private boolean registrationRequired;
 
