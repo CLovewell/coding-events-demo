@@ -15,4 +15,5 @@ public enum EventType {
     public String getDisplayName() {
         return displayName;
     }
+
 }
