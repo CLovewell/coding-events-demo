@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+<body class="container">
+
+<header th:replace="fragments :: header"></header>
+
+<form th:if="${eventTags != null}" method="post">
+    <div class="form-group">
+        <input type="hidden" th:field="${eventTags.event}">
+        <label>
+            <th:block th:each="tag : ${tags}">
+                <span th:text="${tag.name}"></span>
+                <input type="checkbox" name="tagIds" th:value="${tag.id}" th:field="${eventTags.tags}" class="form-control">
+            </th:block>
+        </label>
+    </div>
+    <input type="submit" value="Add tags" class="btn btn-success">
+</form>
+
+</body>
+</html>

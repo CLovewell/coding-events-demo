@@ -6,7 +6,7 @@ import org.launchcode.codingevents.data.TagRepository;
 import org.launchcode.codingevents.models.Event;
 import org.launchcode.codingevents.models.EventCategory;
 import org.launchcode.codingevents.models.Tag;
-import org.launchcode.codingevents.models.dto.EventTagDTO;
+import org.launchcode.codingevents.models.dto.EventTagsDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by Chris Bay
@@ -108,37 +109,39 @@ public class EventController {
         return "events/detail";
     }
 
-    @GetMapping("add-tag")
-    public String displayAddTagForm(@RequestParam Integer eventId, Model model) {
+    @GetMapping("add-tags")
+    public String displayAddTagsForm(@RequestParam Integer eventId, Model model) {
 
         Optional<Event> result = eventRepository.findById(eventId);
         if (result.isPresent()) {
             Event event = result.get();
-            model.addAttribute("title", "Add tag to: " + event.getName());
+            model.addAttribute("title", "Add tags to: " + event.getName());
             model.addAttribute("tags", tagRepository.findAll());
-            EventTagDTO eventTag = new EventTagDTO();
-            eventTag.setEvent(event);
-            model.addAttribute("eventTag", eventTag);
+            EventTagsDTO eventTags = new EventTagsDTO();
+            eventTags.setEvent(event);
+            model.addAttribute("eventTags", eventTags);
         }
         else {
             model.addAttribute("title", "Invalid Event ID: " +
                     eventId);
         }
-        return "events/add-tag";
+        return "events/add-tags";
     }
 
-    @PostMapping("add-tag")
-    public String processAddTagForm(@ModelAttribute @Valid EventTagDTO eventTag,
+    @PostMapping("add-tags")
+    public String processAddTagsForm(@ModelAttribute @Valid EventTagsDTO eventTags,
                                     Errors errors) {
         if (!errors.hasErrors()) {
-            Tag tag = eventTag.getTag();
-            Event event = eventTag.getEvent();
-            event.addTag(tag);
+            Set<Tag> tags = eventTags.getTags();
+            Event event = eventTags.getEvent();
+            for (Tag tag : tags) {
+                event.addTag(tag);
+            }
             eventRepository.save(event);
             return "redirect:detail?eventId=" + event.getId();
         }
         else {
-            return "redirect:add-tag?eventId=" + eventTag.getEvent().getId();
+            return "redirect:add-tag?eventId=" + eventTags.getEvent().getId();
         }
     }
 

@@ -4,16 +4,18 @@ import org.launchcode.codingevents.models.Event;
 import org.launchcode.codingevents.models.Tag;
 
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
-public class EventTagDTO {
+public class EventTagsDTO {
 
     @NotNull
     private Event event;
 
     @NotNull
-    private Tag tag;
+    private Set<Tag> tags = new HashSet<>();
 
-    public EventTagDTO() {}
+    public EventTagsDTO() {}
 
     public Event getEvent() {
         return event;
@@ -23,11 +25,11 @@ public class EventTagDTO {
         this.event = event;
     }
 
-    public Tag getTag() {
-        return tag;
+    public Set<Tag> getTags() {
+        return tags;
     }
 
-    public void setTag(Tag tag) {
-        this.tag = tag;
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }
