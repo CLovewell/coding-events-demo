@@ -65,8 +65,12 @@ public class Event extends AbstractEntity {
         return tags;
     }
 
-    public void addTag(Tag tag) {
-        this.tags.add(tag);
+    public boolean addTag(Tag tag) {
+        return this.tags.add(tag);
+    }
+
+    public boolean removeTag(Tag tag) {
+        return this.tags.remove(tag);
     }
 
     @Override

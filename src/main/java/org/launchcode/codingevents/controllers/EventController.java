@@ -119,18 +119,17 @@ public class EventController {
             EventTagDTO eventTag = new EventTagDTO();
             eventTag.setEvent(event);
             model.addAttribute("eventTag", eventTag);
-            return "events/add-tag";
         }
         else {
             model.addAttribute("title", "Invalid Event ID: " +
                     eventId);
-            return "redirect:";
         }
+        return "events/add-tag";
     }
 
     @PostMapping("add-tag")
     public String processAddTagForm(@ModelAttribute @Valid EventTagDTO eventTag,
-                                    Errors errors, Model model) {
+                                    Errors errors) {
         if (!errors.hasErrors()) {
             Tag tag = eventTag.getTag();
             Event event = eventTag.getEvent();
@@ -139,7 +138,48 @@ public class EventController {
             return "redirect:detail?eventId=" + event.getId();
         }
         else {
-            return "redirect:add-tag";
+            return "redirect:add-tag?eventId=" + eventTag.getEvent().getId();
+        }
+    }
+
+    @GetMapping("remove-tags")
+    public String displayRemoveTagsForm(@RequestParam Integer eventId, Model model) {
+
+        Optional<Event> result = eventRepository.findById(eventId);
+        if (result.isPresent()) {
+            Event event = result.get();
+            model.addAttribute("title", "Remove tags from: " + event.getName());
+            model.addAttribute("event", event);
+            model.addAttribute("tags", event.getTags());
+        }
+        else {
+            model.addAttribute("title", "Invalid Event ID: " + eventId);
+        }
+        return "events/remove-tags";
+    }
+
+    @PostMapping("remove-tags")
+    public String processRemoveTagsForm(@RequestParam(required = false) Integer[] tagIds,
+                                        @RequestParam Integer eventId, Model model) {
+
+        Optional<Event> optionalEvent = eventRepository.findById(eventId);
+        if (optionalEvent.isPresent()) {
+            Event event = optionalEvent.get();
+            if (tagIds != null) {
+                for (Integer id : tagIds) {
+                    Optional<Tag> optionalTag = tagRepository.findById(id);
+                    optionalTag.ifPresent(event::removeTag);
+                }
+                eventRepository.save(event);
+            }
+            model.addAttribute("title", event.getName() + " Details");
+            model.addAttribute("event", event);
+            model.addAttribute("tags", event.getTags());
+            return "redirect:detail?eventId=" + event.getId();
+        }
+        else {
+            model.addAttribute("title", "Invalid Event ID: " + eventId);
+            return "events/remove-tags";
         }
     }
 }

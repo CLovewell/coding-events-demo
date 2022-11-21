@@ -5,7 +5,7 @@
 
 <header th:replace="fragments :: header"></header>
 
-<table class="table table-striped">
+<table th:if="${event != null}" class="table table-striped">
     <tr>
         <th>ID</th>
         <td th:text="${event.id}"></td>
@@ -26,7 +26,11 @@
     </tr>
 </table>
 
-<a th:href="'/events/add-tag?eventId=' + ${event.id}">Add Tag</a>
+<div th:if="${event != null}">
+<a th:href="'/events/add-tag?eventId=' + ${event.id}">Add Tags</a>
+<br>
+<a th:href="'/events/remove-tags?eventId=' + ${event.id}">Remove Tags</a>
+</div>
 
 </body>
 </html>

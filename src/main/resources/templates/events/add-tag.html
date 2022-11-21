@@ -5,7 +5,7 @@
 
 <header th:replace="fragments :: header"></header>
 
-<form method="post">
+<form th:if="${eventTag != null}" method="post">
     <div class="form-group">
         <input type="hidden" th:field="${eventTag.event}">
         <select th:field="${eventTag.tag}">
