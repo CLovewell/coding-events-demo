@@ -14,6 +14,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 
@@ -34,12 +36,14 @@ public class EventController {
     private TagRepository tagRepository;
 
     @GetMapping
-    public String displayEvents(@RequestParam(required = false) Integer categoryId, Model model) {
+    public String displayEvents(@RequestParam(required = false) Integer categoryId,
+                                @RequestParam(required = false) Integer tagId, Model model) {
 
-        if (categoryId == null) {
+        if (categoryId == null && tagId == null) {
             model.addAttribute("title", "All Events");
             model.addAttribute("events", eventRepository.findAll());
-        } else {
+        }
+        else if (tagId == null) {
             Optional<EventCategory> result = eventCategoryRepository.findById(categoryId);
             if (result.isEmpty()) {
                 model.addAttribute("title", "Invalid Category ID: " + categoryId);
@@ -47,6 +51,52 @@ public class EventController {
                 EventCategory category = result.get();
                 model.addAttribute("title", "Events in category: " + category.getName());
                 model.addAttribute("events", category.getEvents());
+            }
+        }
+        else if (categoryId == null) {
+            Optional<Tag> optionalTag = tagRepository.findById(tagId);
+            if (optionalTag.isEmpty()) {
+                model.addAttribute("title", "Invalid Tag ID: " + categoryId);
+            }
+            else {
+                Tag tag = optionalTag.get();
+                model.addAttribute("title", "Events with tag: " + tag.getDisplayName());
+                model.addAttribute("events", tag.getEvents());
+            }
+        }
+        else {
+            Optional<EventCategory> optionalEventCategory = eventCategoryRepository.findById(categoryId);
+            Optional<Tag> optionalTag = tagRepository.findById(tagId);
+            if (optionalEventCategory.isEmpty() && optionalTag.isEmpty()) {
+                model.addAttribute("title", "Invalid Category ID: " + categoryId);
+                model.addAttribute("subtitle","Invalid Tag ID: " + tagId);
+            }
+            else if (optionalEventCategory.isEmpty()) {
+                Tag tag = optionalTag.get();
+                model.addAttribute("title", "Invalid Category ID: " + categoryId);
+                model.addAttribute("subtitle", "Events with tag: " + tag.getName());
+                model.addAttribute("events", tag.getEvents());
+            }
+            else if (optionalTag.isEmpty()) {
+                EventCategory eventCategory = optionalEventCategory.get();
+                model.addAttribute("title", "Invalid Tag ID: " + tagId);
+                model.addAttribute("subtitle", "Events in category: " + eventCategory.getName());
+                model.addAttribute("events", eventCategory.getEvents());
+            }
+            else {
+                Tag tag = optionalTag.get();
+                EventCategory eventCategory = optionalEventCategory.get();
+                model.addAttribute("title", "Events in category: " + eventCategory.getName());
+                model.addAttribute("subtitle", "with tag: " + tag.getName());
+                Collection<Event> results = new ArrayList<>();
+                Collection<Event> tagResults = tag.getEvents();
+                Collection<Event> categoryResults = eventCategory.getEvents();
+                for (Event event : tagResults) {
+                    if (categoryResults.contains(event)) {
+                        results.add(event);
+                    }
+                }
+                model.addAttribute("events", results);
             }
         }
 
@@ -141,7 +191,7 @@ public class EventController {
             return "redirect:detail?eventId=" + event.getId();
         }
         else {
-            return "redirect:add-tag?eventId=" + eventTags.getEvent().getId();
+            return "redirect:add-tags?eventId=" + eventTags.getEvent().getId();
         }
     }
 
